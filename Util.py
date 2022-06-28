@@ -28,6 +28,7 @@ sample_loc_data = {
     'lat_lng': {'lat': '34.7444618', 'lng': '-92.2880157'}
 }
 
+
 def initMqttClient(client_id, username, password, broker, port):
     """
     Initialize MQTT Client
