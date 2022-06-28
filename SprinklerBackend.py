@@ -9,6 +9,8 @@ class SprinklerBackend:
         """
         Initialize Sprinkler Backend by Initializing MTQQClient
         and starting subscription.
+
+        MQTTClient shouldn't be initialized when running unit tests.
         """
 
         if init_mqtt:

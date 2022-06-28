@@ -13,6 +13,8 @@ class SprinklerController:
             2. Starting a subscription for schedule updates from the backend.
             3. Getting Initial soil conditions from sensors.
             4. Beginning the loop to publish soil condition updates.
+
+        MQTTClient shouldn't be initialized when running unit tests.
         """
 
         self.schedule_start = ''
@@ -128,12 +130,14 @@ class SprinklerController:
         return Util.sample_soil_conditions
 
 
+# Test output of SprinklerController.getSoilConditions()
 def test_getSoilConditions():
     controller = SprinklerController(init_mqtt=False)
     conditions = controller.getSoilConditions()
     assert conditions == Util.sample_soil_conditions
 
 
+# Test output of SprinklerController.setSchedule()
 def test_setSchedule():
     controller = SprinklerController(init_mqtt=False)
     controller.setSchedule(json.loads(Util.sample_schedule))
