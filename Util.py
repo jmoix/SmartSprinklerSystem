@@ -2,7 +2,7 @@ from paho.mqtt import client as mqtt_client
 
 # Static String Variables
 UUID = '90e22294-92c6-4998-976e-816f0585d3f6'
-MAPS_API_KEY = 'AIzaSyCMwFpRy3GmlCsw6N4-4xgkJ22zVWyL3fI'
+MAPS_API_KEY = ''
 MQTT_BROKER = 'broker.emqx.io'
 MQTT_PORT = 1883
 MQTT_USERNAME = 'emqx'
