@@ -36,8 +36,10 @@ class SprinklerBackend:
 
     def getLoc(self, uuid):
 
-        data = {'uuid': 'AIzaSyCMwFpRy3GmlCsw6N4-4xgkJ22zVWyL3fI',
-                'city_state': {'city': 'Little Rock', 'state': 'Arkansas'}, 'lat_lng': {'lat': '34.7444618', 'lng': '-92.2880157'}}
+        data = {
+            'uuid': 'AIzaSyCMwFpRy3GmlCsw6N4-4xgkJ22zVWyL3fI',
+            'city_state': {'city': 'Little Rock', 'state': 'Arkansas'},
+            'lat_lng': {'lat': '34.7444618', 'lng': '-92.2880157'}}
         return data['lat_lng']
 
     def getGPS(self, city, state):
