@@ -5,7 +5,7 @@ import Util
 
 class SprinklerController:
 
-    def __init__(self):
+    def __init__(self, init_mqtt=True):
 
         """
         Initialize Sprinkler Controller by
@@ -17,16 +17,18 @@ class SprinklerController:
 
         self.schedule_start = ''
         self.schedule_stop = ''
-        self.mqttClient = Util.initMqttClient(
-            'smart-sprinkler-controller-{}'.format(Util.UUID),
-            Util.MQTT_USERNAME,
-            Util.MQTT_PASSWORD,
-            Util.MQTT_BROKER,
-            Util.MQTT_PORT)
 
-        self.mqttClient.loop_start()
-        self.subscribe(Util.topicSprinklerSchedule)
-        self.publish()
+        if init_mqtt:
+            self.mqttClient = Util.initMqttClient(
+                'smart-sprinkler-controller-{}'.format(Util.UUID),
+                Util.MQTT_USERNAME,
+                Util.MQTT_PASSWORD,
+                Util.MQTT_BROKER,
+                Util.MQTT_PORT)
+
+            self.mqttClient.loop_start()
+            self.subscribe(Util.topicSprinklerSchedule)
+            self.publish()
 
         print("Running")
 
@@ -124,6 +126,21 @@ class SprinklerController:
         # Write method for getting soil conditions from sensors
 
         return Util.sample_soil_conditions
+
+
+def test_getSoilConditions():
+    controller = SprinklerController(init_mqtt=False)
+    conditions = controller.getSoilConditions()
+    assert conditions == Util.sample_soil_conditions
+
+
+def test_setSchedule():
+    controller = SprinklerController(init_mqtt=False)
+    controller.setSchedule(json.loads(Util.sample_schedule))
+    assert controller.schedule_start == '2022-06-28T06:00:00-04:00', "Wrong start time: {}"\
+        .format(controller.schedule_start)
+    assert controller.schedule_stop == '2022-06-28T18:00:00-04:00', "Wrong start time: {}"\
+        .format(controller.schedule_stop)
 
 
 if __name__ == '__main__':
