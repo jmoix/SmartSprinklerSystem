@@ -5,29 +5,28 @@ import json
 
 class SprinklerBackend:
 
-    def __init__(self):
-
+    def __init__(self, init_mqtt=True):
         """
         Initialize Sprinkler Backend by Initializing MTQQClient
         and starting subscription.
         """
 
-        # Connect to the MQTT service using the init method found in Util
-        self.mqttClient = Util.initMqttClient(
-            'smart-sprinkler-backend',
-            Util.MQTT_USERNAME,
-            Util.MQTT_PASSWORD,
-            Util.MQTT_BROKER,
-            Util.MQTT_PORT)
+        if init_mqtt:
+            # Connect to the MQTT service using the init method found in Util
+            self.mqttClient = Util.initMqttClient(
+                'smart-sprinkler-backend',
+                Util.MQTT_USERNAME,
+                Util.MQTT_PASSWORD,
+                Util.MQTT_BROKER,
+                Util.MQTT_PORT)
 
-        # Subscribe to listen to messages related to soil condition
-        self.subscribe(Util.topicSoilCondition)
+            # Subscribe to listen to messages related to soil condition
+            self.subscribe(Util.topicSoilCondition)
 
-        # Start continuous loop to listen for messages
-        self.mqttClient.loop_forever()
+            # Start continuous loop to listen for messages
+            self.mqttClient.loop_forever()
 
     def subscribe(self, topic):
-
         """
         Subscribe to topic
 
@@ -43,7 +42,6 @@ class SprinklerBackend:
 
         # Function to be executed when a subscribed message is received
         def on_message(client, userdata, msg):
-
             # Get topic and message for logging
             msg_topic = msg.topic
             msg = msg.payload.decode()
@@ -68,7 +66,6 @@ class SprinklerBackend:
         self.mqttClient.subscribe(topic)
 
     def getLoc(self, uuid):
-
         """
         Get location data for sprinkler system.
 
@@ -90,7 +87,6 @@ class SprinklerBackend:
         return loc
 
     def getGPS(self, city, state):
-
         """
         Function to retrieve GPS coordinates of sprinkler system from Google Maps
         based on city and state.
@@ -124,7 +120,6 @@ class SprinklerBackend:
         return loc
 
     def getWeatherMetaData(self, uuid):
-
         """
         Function to retrieve weather meta-data from the weather.gov API
 
@@ -154,7 +149,6 @@ class SprinklerBackend:
         return forecast
 
     def getSprinklerSchedule(self, uuid, grass_type, soil_condition):
-
         """
         Function to create sprinkler schedule from soil, grass, weather, and geo-location
 
@@ -187,6 +181,35 @@ class SprinklerBackend:
         return schedule
 
 
+# Test output of SprinklerBackend.getSprinklerSchedule()
+def test_getSprinklerSchedule():
+    backend = SprinklerBackend(init_mqtt=False)
+    schedule = backend.getSprinklerSchedule(Util.UUID, 'bermuda', 'very dry')
+    assert schedule == Util.sample_schedule, "Wrong schedule"
+
+
+# Test output of SprinklerBackend.getWeatherMetaData()
+def test_get_weather_metadata():
+    backend = SprinklerBackend(init_mqtt=False)
+    forecast = backend.getWeatherMetaData(Util.UUID)
+    assert len(forecast) > 5, "Something went wrong"
+
+
+# Test output of SprinklerBackend.getGPS()
+def test_get_gps():
+    backend = SprinklerBackend(init_mqtt=False)
+    gps = backend.getGPS('Little Rock', 'Arkansas')
+    assert gps['lat'] == 34.7444618, "Wrong Latitude {}".format(gps['lat'])
+    assert gps['lng'] == -92.2880157, "Wrong Longitude {}".format(gps['lng'])
+
+
+# Test output of SprinklerBackend.getLoc()
+def test_get_loc():
+    backend = SprinklerBackend(init_mqtt=False)
+    loc = backend.getLoc(Util.UUID)
+    assert float(loc['lat']) == 34.7444618, "Wrong Latitude {}".format(loc['lat'])
+    assert float(loc['lng']) == -92.2880157, "Wrong Longitude {}".format(loc['lng'])
+
+
 if __name__ == '__main__':
     api = SprinklerBackend()
-
